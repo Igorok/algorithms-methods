@@ -1,69 +1,94 @@
-import random
+'''
+Задача на программирование: очередь с приоритетами
+
+Первая строка входа содержит число операций 1 <= n <= 10^5. Каждая из последующих n строк задают операцию одного из следующих двух типов:
+Insert x, где 0 <= x <= 10^9 — целое число;
+ExtractMax
+
+Первая операция добавляет число x в очередь с приоритетами, вторая — извлекает максимальное число и выводит его.
+
+Sample Input:
+6
+Insert 200
+Insert 10
+ExtractMax
+Insert 5
+Insert 500
+ExtractMax
+
+Sample Output:
+200
+500
+'''
+
+'''
+        20
+    30      40
+  35  36  42  43
+
+[20, 30, 40, 35, 36, 42, 43]
+'''
 
 
-class Node:
-    def __init__(self, p):
-        self.left = None
-        self.right = None
-        self.parent = None
-        self.value = p
-        self.height = 0
 
 
+import sys
 class Heap:
     def __init__(self):
-        self.nodes = []
-        self.root = None
+        self.heap = []
         pass
 
-    def insert(self, p, node):
-        if self.root is None:
-            self.root = Node(p)
+    def _moveTop(self, i):
+        if i <= 0:
             return
-        if node is None:
-            node = self.root
+        while self.heap[i] > self.heap[(i - 1) // 2] and i > 0:
+            self.heap[i], self.heap[(
+                i - 1) // 2] = self.heap[(i - 1) // 2], self.heap[i]
+            i = (i - 1) // 2
 
-        if node.left is None:
-            node.left = Node(p)
-            node.left.parent = node
-            return self._correctTop(node.left)
+    def _moveBottom(self, i):
+        while (i * 2 + 1) < len(self.heap):
+            l = i * 2 + 1
+            r = i * 2 + 2
+            j = i
+            if self.heap[l] > self.heap[j]:
+                j = l
+            if r < len(self.heap) and self.heap[r] > self.heap[j]:
+                j = r
+            if j == i:
+                break
 
-        if node.right is None:
-            node.right = Node(p)
-            node.right.parent = node
-            return self._correctTop(node.right)
+            self.heap[i], self.heap[j] = self.heap[j], self.heap[i]
+            i = j
 
-        rand = random.uniform(0, 1)
-        if rand == 0:
-            self.insert(p, node.left)
-        else:
-            self.insert(p, node.right)
+    def insert(self, v):
+        self.heap.append(v)
+        self._moveTop(len(self.heap) - 1)
 
     def extractMax(self):
-        pass
-
-    def _correctTop(self, node):
-        if node.parent.value >= node.value:
-            return
-
-        if node.parent.left == node:
-            node.parent.left = None
-
-        if node.parent.right == node:
-            node.parent.right = None
-
-        if node.left:
-            pass
-        if node.right:
-            pass
-
-        node.parent, node.parent.parent = node.parent.parent, node.parent
-
-        pass
+        if len(self.heap):
+            if len(self.heap) == 1:
+                return self.heap.pop(0)
+            elif len(self.heap) > 1:
+                self.heap[0], self.heap[-1] = self.heap[-1], self.heap[0]
+                v = self.heap.pop(-1)
+                self._moveBottom(0)
+                return v
 
 
 def main():
-    pass
+    heap = Heap()
+    commandLen = None
+    for line in sys.stdin:
+        if commandLen == None:
+            commandLen = int(line)
+        else:
+            data = line.split(' ')
+            command = data[0]
+            if command == 'Insert':
+                heap.insert(int(data[1]))
+            else:
+                print(heap.extractMax())
 
 
 if __name__ == "__main__":
