@@ -16,21 +16,28 @@ import sys
 class Sequence:
     def __init__(self, numList):
         self.numList = numList
-        self.countList = [0] * len(numList)
+        self.countList = [1] * len(numList)
+        self.max = 0
 
     def calculate(self):
-        pass
+        if len(self.numList) == 1:
+            self.max = 1
+            return
 
-    def getMax(self):
-        pass
+        for i in range(1, len(self.numList)):
+            for j in reversed(range(i)):
+                if j < 0:
+                    break
 
+                div = self.numList[i] % self.numList[j]
+                if div == 0 and 1 + self.countList[j] > self.countList[i]:
+                    self.countList[i] = 1 + self.countList[j]
 
-def sequence(nums):
-    countList = [0] * len(nums)
+            if self.countList[i] > self.max:
+                self.max = self.countList[i]
 
-    print('nums', nums, countList)
-
-    pass
+    def getLen(self):
+        print(self.max)
 
 
 def main():
@@ -43,7 +50,7 @@ def main():
             numList = list(int(v) for v in line.split(' '))
             sequence = Sequence(numList)
             sequence.calculate()
-            return sequence.getMax()
+            return sequence.getLen()
 
 
 if __name__ == "__main__":
